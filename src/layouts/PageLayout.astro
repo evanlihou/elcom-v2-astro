@@ -1,0 +1,53 @@
+---
+import MenuBar from "../components/common/MenuBar.astro";
+import Header from "../components/common/Header.astro";
+import Layout from "./Layout.astro";
+
+const buildTime = new Date();
+---
+
+<Layout title={Astro.props.title}>
+  <div class="pageContainer">
+    <MenuBar links={[{displayText: "", url: ""}]}/>
+    <main>
+      <slot name="header">
+        <Header />
+      </slot>
+      <div style="margin: 10px 5% 0 5%">
+        <slot />
+      </div>
+    </main>
+    <footer>
+      Rendered <abbr title={buildTime.toISOString()}>
+        {buildTime.toLocaleDateString(undefined, {month: 'short', year: 'numeric', day: 'numeric'})}</abbr>.
+        Built with <a href="https://astro.build" target="_blank">Astro</a>. Content managed using <a href="https://pocketbase.io" target="_blank">PocketBase</a>.
+    </footer>
+  </div>
+</Layout>
+
+<style lang="scss">
+  .pageContainer {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+
+    main {
+      flex-grow: 1;
+    }
+  }
+  footer {
+    margin-top: 20px;
+    padding: 10px;
+    width: 100%;
+    text-align: center;
+    background-color: var(--neutral-200);
+    box-sizing: border-box;
+
+    @media print {
+    //   display: none;
+      abbr {
+        text-decoration: none;
+      }
+    }
+  }
+</style>

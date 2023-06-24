@@ -1,0 +1,17 @@
+button {
+  border: none;
+  margin-right: 0 20px 0 20px;
+  border-radius: 7px;
+  display: block;
+  padding: 3px 7px;
+  font-size: 1rem;
+  box-shadow: none;
+  text-align: center;
+  background: var(--background);
+  color: var(--text);
+  font-variant: small-caps;
+
+  &:hover {
+    cursor: pointer;
+  }
+}

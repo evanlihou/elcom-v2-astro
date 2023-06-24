@@ -1,0 +1,27 @@
+---
+import { cmsData, listEndpointBuilder } from '../../services/cms';
+
+import ChipList from './ChipList.astro';
+
+type Skill = {
+  name: string;
+}
+
+const { items: skills } = await cmsData<Skill>(listEndpointBuilder('skills', {
+  pageSize: 100,
+  fields: ['name'],
+  sort: ['weight']
+}));
+if (skills == null) throw new Error("Did not find skills");
+
+
+---
+<div>
+  <h3>Skills</h3>
+  <div class="content">
+    <ChipList items={skills.map(sk => sk.name)} />
+  </div>
+</div>
+
+<style lang="scss">
+</style>

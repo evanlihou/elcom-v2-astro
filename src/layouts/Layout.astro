@@ -1,36 +1,120 @@
 ---
+import { siteConfigStore } from '../siteConfigStore';
+
 export interface Props {
 	title: string;
 }
 
 const { title } = Astro.props;
+const siteConfig = siteConfigStore.get();
 ---
 
 <!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="description" content="Astro description">
+		<meta name="description" content={siteConfig.name}>
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
+		<title>{title ? `${title} - ` : ''}{siteConfig.name}</title>
 	</head>
 	<body>
 		<slot />
 	</body>
 </html>
-<style is:global>
+<style is:global lang="scss">
+  $accent: #2f83e2; // Main accent color
+
+  @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700');
+  @function lower($c, $a) {
+    @return if($a < 0, lighten($c, abs($a)), darken($c, $a))
+  };
+  @function higher($c, $a) {
+    @return if($a < 0, darken($c, abs($a)), lighten($c, $a))
+  };
+  // In light mode, lower numbers are lighter. In dark mode, lower numbers are darker
+  @mixin generate-shades($name, $value, $interval: 7.6%) {
+    --#{$name}-100: #{lower($value, $interval * 4)};
+    --#{$name}-200: #{lower($value, $interval * 3)};
+    --#{$name}-300: #{lower($value, $interval * 2)};
+    --#{$name}-400: #{lower($value, $interval)};
+    --#{$name}-500: #{$value};
+    --#{$name}-600: #{higher($value, $interval)};
+    --#{$name}-700: #{higher($value, $interval * 2)};
+    --#{$name}-800: #{higher($value, $interval * 3)};
+    --#{$name}-900: #{higher($value, $interval * 4)};
+  }
+  @mixin light-colors {
+    --text: #222222;
+    --background: #eeeeee;
+    --accent: #{$accent};
+    @include generate-shades("accent", $accent, -7.6%);
+    @include generate-shades("neutral", #888, -7.6%);
+  }
+  @mixin dark-colors {
+    --text: #cccccc;
+    --background: #333333;
+    --accent: #{darken($accent, 30%)};
+    @include generate-shades("accent", darken($accent, 30%), 3.6%);
+    @include generate-shades("neutral", #888, 7.6%);
+  }
 	:root {
-		--accent: 124, 58, 237;
-		--accent-gradient: linear-gradient(45deg, rgb(var(--accent)), #da62c4 30%, white 60%);
+    /* Default, in case we don't have a theme set for some reason */
+    @include light-colors;
 	}
+  @media (prefers-color-scheme: dark) {
+    body {
+      @include dark-colors;
+    }
+  }
+  body[data-theme=dark] {
+    @include dark-colors;
+  }
+  body[data-theme=light] {
+    @include light-colors;
+  }
 	html {
-		font-family: system-ui, sans-serif;
-		background-color: #F6F6F6;
+    padding: 0;
+    margin: 0;
+    min-height: 100vh;
 	}
-	code {
-		font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
-			Bitstream Vera Sans Mono, Courier New, monospace;
-	}
+  body {
+    padding: 0;
+    margin: 0;
+    min-height: 100vh;
+    transition: background-color 0.25s ease, color 0.25s ease;
+    color: var(--text);
+		background-color: var(--background);
+  }
+	body {
+    font-family: 'Open Sans', sans-serif;
+    &[data-theme="dark"] {
+      ::selection {
+        background: black;
+      }
+    }
+    @media print {
+      font-size: 0.7em;
+    }
+  }
+  a {
+    color: var(--text);
+    @media print {
+      text-decoration: none;
+      &::after {
+        content: " (" attr(href) ") ";
+      }
+    }
+  }
+  hr {
+    margin: 20px 20% 10px 20%;
+    border-style: solid;
+    $contrast-modifier: 20%;
+    border-width: .75px;
+    color: var(--neutral-400);
+  }
+  h3 {
+    text-transform: uppercase;
+    color: var(--text);
+  }
 </style>

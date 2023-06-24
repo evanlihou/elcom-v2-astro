@@ -1,0 +1,137 @@
+---
+import { Icon } from 'astro-icon';
+
+import { siteConfigStore } from '../../siteConfigStore';
+import EmailButton from './EmailButton';
+
+interface Props {
+  pageTitle?: string
+};
+const siteConfig = siteConfigStore.get();
+const { pageTitle } = Astro.props;
+const isHome = pageTitle === undefined;
+---
+
+<div class="headerContainer">
+  <div class="callToAction">
+    <div class="ctaContent">
+      {isHome && <h1 class="noPrint">Hey there!</h1>}
+      <h2>{isHome && <span class="noPrint">I'm </span>}{siteConfig.name}</h2>
+      {isHome && <EmailButton client:load rawEmail={siteConfig.email} />}
+      {isHome && <section class="social">
+        {siteConfig.socials.map(social => 
+          <a rel="me" href={social.url}>
+            <Icon width="3rem" height="3rem" name={social.icon} />{social.display}
+          </a>)}
+      </section>}
+      {!isHome && <h3>{pageTitle}</h3>}
+    </div>
+  </div>
+</div>
+
+<style lang="scss">
+  $skew-angle: 25%;
+  .headerContainer {
+    filter: drop-shadow(-1px 6px 3px var(--neutral-200));
+    @media print {
+      filter: none;
+    }
+  }
+  .callToAction {
+    color: white;
+    background-image: linear-gradient(to top, var(--accent), var(--accent-600));
+    text-align: center;
+    text-transform: uppercase;
+    padding-top: 30px;
+    padding-bottom: 120px;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100% - $skew-angle);
+    width: 100%;
+    @media print {
+      margin-top: 0;
+      box-shadow: none !important;
+      background-image: none !important;
+      color: unset !important;
+    }
+    .ctaContent {
+      @media print {
+        margin-top: 0;
+        padding-top: 0;
+      }
+      h1 {
+        font-size: 3rem;
+        margin-top: 0;
+      }
+      h2 {
+        font-size: 1.8rem;
+      }
+      h3 {
+        color: white;
+        font-size: 2rem;
+        body[data-theme="dark"] & {
+          color: var(--color);
+        }
+      }
+      .Typewriter {
+        display: inline;
+      }
+      
+      .social {
+        margin-top: 30px;
+        margin-left: 10%;
+        margin-right: 10%;
+        display: flex;
+        justify-content: space-around;
+        flex-flow: wrap;
+        font-weight: bold;
+        text-transform: none;
+        font-size: 1.2rem;
+        @media print {
+          font-size: 1em !important;
+        }
+        @media screen and (min-width: 60em) {
+          width: 50%;
+          margin: 30px 25% 0px 25%;
+        }
+        a {
+          color: white;
+          body[data-theme="dark"] & {
+            color: var(--color);
+          }
+          padding-right: 0;
+          padding: 5px;
+          margin: 0 5px;
+          text-decoration: none;
+          transition: background-color .2s;
+          &:hover {
+            border-radius: 5px;
+            background-color: var(--accent-600)
+          }
+          @media print {
+            color: black;
+            &::after {
+              content: none;
+            }
+          }
+        }
+        svg {
+          margin: 0 auto;
+          padding-bottom: 5px;
+          padding-top: 10px;
+          display: block;
+          font-size: 2rem;
+          @media print {
+            font-size: 1em;
+            padding-bottom: 0;
+            padding-top: 0;
+            padding-right: 0.5em;
+          }
+        }
+      }
+    }
+    .noPrint {
+      @media print {
+        display: none;
+      }
+    }
+  }
+</style>

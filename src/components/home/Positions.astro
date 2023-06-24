@@ -1,0 +1,104 @@
+---
+import { cmsData, listEndpointBuilder } from '../../services/cms';
+
+import ChipList from './ChipList.astro';
+
+type Position = {
+  title: string;
+  company: string;
+  start: string;
+  end: string | null;
+  isCurrent: 0 | 1;
+  skills: {name: string}[]
+  description: string; // Raw HTML
+};
+const { items: positions, totalPages } = await cmsData<Position>(listEndpointBuilder('positions_public', {
+  expand: ['skills'],
+  fields: ['title,company,start,end,isCurrent,description,skills', 'expand.skills.{id,name}'],
+  sort: ['-start']
+}));
+if (positions == null) throw new Error("Did not find positions");
+
+const intlOptions = new Intl.DateTimeFormat('en-US', {month: 'long', year: 'numeric', timeZone: 'UTC'})
+const areDisplayedEqual = (a: Date, b: Date) => intlOptions.format(a) === intlOptions.format(b);
+
+function getTimespan(pos: Position): string {
+  const startDate = new Date(pos.start);
+  if (pos.end) {
+    const endDate = new Date(pos.end);
+    if (areDisplayedEqual(startDate, endDate)) return intlOptions.format(startDate);
+    return intlOptions.formatRange(startDate, endDate).replace('–', 'to');
+  } else {
+    return `${intlOptions.format(startDate)} to present`;
+  }
+}
+
+---
+<section>
+  <h3>Curriculum Vitae</h3>
+  <div class="content">
+    {positions.map(pos => <div class="position">
+      {pos.isCurrent === 1 && <span class="currentTag">Current Position</span>}
+      <div class="basicInfo">
+        <h4>{pos.title}</h4>
+        <span class="company">{pos.company}</span>
+        </div>
+      <div class="timespan">{getTimespan(pos)}</div>
+      <ChipList items={pos.skills.filter(sk => sk !== undefined).map(sk => sk.name)} centered={false} />
+      <div class="description" set:html={pos.description}></div>
+    </div>)}
+    {totalPages > 1 && <div style="padding-top: 2rem; font-style: italic; text-align: center">
+      Note: Not all positions are displayed due to content length. Reach out for my full experience!
+    </div>}
+  </div>
+</section>
+
+<style lang="scss">
+  .position {
+    &:not(:last-of-type) {
+      padding-bottom: 1.5rem;
+    }
+
+    .basicInfo {
+      // display: flex;
+      gap: 2em;
+    }
+
+    .timespan {
+      margin: 0.3em 0 0.5em 0;
+    }
+
+    .description {
+      margin-top: 0.5em;
+      :global(ul) {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+      :global(p:last-child) {
+        padding-bottom: 0;
+        margin-bottom: 0;
+      }
+    }
+    h4, .company {
+      margin: 0;
+    }
+    .company {
+      font-style: italic;
+    }
+    .currentTag {
+      display: inline-block;
+      margin: .5em 0;
+      body[data-theme=light] & {
+        background-color: var(--accent-200);
+      }
+      background-color: var(--accent-700);
+      padding: 5px;
+      font-weight: 400;
+      @media print {
+        background-color: #eee;
+        color: black;
+        -webkit-print-color-adjust: exact !important;
+      }
+    }
+  }
+</style>

@@ -1,0 +1,38 @@
+---
+export interface Props {
+  items: string[];
+  centered?: boolean;
+};
+
+const { items, centered } = Astro.props;
+---
+
+{items.length > 0 && <ul class:list={{centered: centered ?? true}}>
+  {items.map((item) => <li>{item}</li>)}
+</ul>}
+
+<style lang="scss">
+  ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    padding: 0;
+    margin: 5px 0 5px 0;
+    gap: 5px;
+
+    &.centered {
+      justify-content: center;
+    }
+    li {
+      background-color: var(--neutral-200);
+      padding: 5px;
+      font-weight: 400;
+      @media print {
+        background-color: #eee;
+        color: black;
+        -webkit-print-color-adjust: exact !important;
+      }
+    }
+  }
+</style>

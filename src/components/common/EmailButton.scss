@@ -1,0 +1,31 @@
+.contact {
+  border: 2px solid var(--accent-400);
+  background: var(--accent-100);
+  color: var(--text);
+  border-radius: 7px;
+  display: block;
+  padding: 16px;
+  margin-top: 30px;
+  font-size: 1.5rem;
+  box-shadow: none;
+  width: 180px;
+  margin: 0 auto;
+  text-decoration: none;
+  text-align: center;
+  &:hover {
+    cursor: pointer;
+  }
+  @media screen and (max-width: 60em) {
+    width: 80%;
+    margin: 0 auto;
+  }
+  @media print {
+    display: none;
+  }
+}
+.contactText {
+  display: none;
+  @media print {
+    display: block;
+  }
+}
