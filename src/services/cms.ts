@@ -78,4 +78,16 @@ export async function cmsDataFirst<T>(endpoint: string): Promise<T | null> {
   return cmsResponse.items[0];
 }
 
+export type BaseCmsItem = {
+  collectionId: string;
+  id: string;
+  [field: string]: string;
+}
+export function getImageUrl(item: BaseCmsItem, fieldName: string, thumb: string | null = null) {
+  if (!item.collectionId || !item.id) throw new Error("collectionId and id must be fetched to get file URLs")
+  let endpoint = `${import.meta.env.PUBLIC_ASSETS_BASE}/files/${item.collectionId}/${item.id}/${item[fieldName]}`;
+  if (thumb) endpoint += `?thumb=${thumb}`;
+  return endpoint;
+}
+
 export default cmsData;

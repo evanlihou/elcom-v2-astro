@@ -1,0 +1,94 @@
+---
+import cmsData, { listEndpointBuilder, getImageUrl, BaseCmsItem } from "../../services/cms";
+type Project = BaseCmsItem & {
+  title: string;
+  description: string; // Raw HTML
+  image: string;
+  sourceCodeUrl: string | null;
+};
+const { items: projects, totalPages } = await cmsData<Project>(listEndpointBuilder('projects', {
+  expand: [],
+  fields: ['title,description,image,sourceCodeUrl,id,collectionId'],
+  sort: ['weight']
+}));
+if (projects == null) throw new Error("Did not find projects");
+---
+
+<section>
+  <h3>Projects</h3>
+  <ul>
+    {projects.map(proj => <li>
+      {proj.image && <img src={getImageUrl(proj, 'image', '750x0')} alt={`Screenshot of ${proj.title}`} />}
+      <h4>{proj.title}</h4>
+      <div class="description" set:html={proj.description}></div>
+      <div class="linkContainer">
+        <a href={proj.sourceCodeUrl}>Source Code</a>
+      </div>
+    </li>)}
+  </ul>
+</section>
+
+<style lang="scss">
+  ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    li {
+      display: flex;
+      flex-direction: column;
+      // Half the width, but account for the 5px padding and margin on each side
+      width: calc(50% - 20px);
+      background: var(--neutral-100);
+      body[data-theme="dark"] & {
+        background: var(--neutral-200);
+      }
+
+      padding: 5px;
+      margin: 5px;
+
+      h4 {
+        margin-bottom: 0;
+        margin-left: 10px;
+      }
+
+      .description {
+        :global(p) {
+          margin: 10px;
+          margin-left: 20px;
+        }
+      }
+      
+      img {
+        object-fit: cover;
+        object-position: left top;
+        aspect-ratio: 2.5 / 1;
+        width: 100%;
+        &:before {
+          content: '';
+          width: 100px;
+          height: 100px;
+          background-color: blue;
+        }
+      }
+      .linkContainer {
+        flex-grow: 1;
+        align-self: center;
+        box-sizing: border-box;
+        display: flex;
+        align-items: flex-end;
+      }
+      a {
+        padding: .5em;
+        text-decoration: none;
+        background: var(--neutral-300);
+        // color: $light-mode-text;
+        // background: darken($light-mode-background, 10%);
+        body[data-theme="dark"] & {
+          background: var(--neutral-100);
+          // background: lighten($dark-mode-background, 5%);
+          // color: $dark-mode-text;
+        }
+      }
+    }
+  }
+</style>

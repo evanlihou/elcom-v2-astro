@@ -1,13 +1,16 @@
 ---
 import PageLayout from '../layouts/PageLayout.astro';
 import Header from '../components/common/Header.astro';
+
+
 ---
 
 <PageLayout title="Now">
   <Header slot="header" pageTitle="Now" />
   <section class="intro">
-    A Now page is a concept by Derek Sivers /* TODO LINK */ which makes it easy for someone looking at a personal website to see what that person has been focusing on recently. It is not a daily account of my life, simply a high level overview of my priorities.
+    A Now page is a concept by <a href="https://sivers.org/nowff">Derek Sivers</a> which makes it easy for someone looking at a personal website to see what that person has been focusing on recently. It is not a daily account of my life, simply a high level overview of my priorities.
   </section>
+
 </PageLayout>
 
 <style lang="scss">

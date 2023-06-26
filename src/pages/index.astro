@@ -6,6 +6,7 @@ import Header from '../components/common/Header.astro';
 import AboutMe from '../components/home/AboutMe.astro';
 import Positions from '../components/home/Positions.astro';
 import Skills from '../components/home/Skills.astro';
+import Projects from '../components/home/Projects.astro';
 
 const siteConfig = siteConfigStore.get();
 ---
@@ -16,6 +17,8 @@ const siteConfig = siteConfigStore.get();
   <AboutMe set:html={siteConfig.aboutMe}></AboutMe>
   <hr />
   <Positions />
+  <hr />
+  <Projects />
   <hr />
   <Skills />
 </PageLayout>
