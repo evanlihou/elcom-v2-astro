@@ -45,8 +45,12 @@ export function listEndpointBuilder(collection: string, opt: ListEndpointBuilder
   return endpoint;
 }
 
+function getEnvironmentValue(key: string): string | undefined {
+  return import.meta.env[key] || process.env[key];
+}
+
 export async function cmsData<T>(endpoint: string): Promise<CmsSearchResponse<T>> {
-  const response = await fetch(`${import.meta.env.PUBLIC_CMS_BASE}${endpoint}`);
+  const response = await fetch(`${getEnvironmentValue('PUBLIC_CMS_BASE')}${endpoint}`);
   if (!response.ok) throw new Error(`Failed to fetch from CMS: ${response.status} - ${await response.text()}`);
 
   let json = await response.json();
@@ -85,7 +89,7 @@ export type BaseCmsItem = {
 }
 export function getImageUrl(item: BaseCmsItem, fieldName: string, thumb: string | null = null) {
   if (!item.collectionId || !item.id) throw new Error("collectionId and id must be fetched to get file URLs")
-  let endpoint = `${import.meta.env.PUBLIC_ASSETS_BASE}/files/${item.collectionId}/${item.id}/${item[fieldName]}`;
+  let endpoint = `${getEnvironmentValue('PUBLIC_ASSETS_BASE')}/files/${item.collectionId}/${item.id}/${item[fieldName]}`;
   if (thumb) endpoint += `?thumb=${thumb}`;
   return endpoint;
 }

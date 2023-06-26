@@ -11,14 +11,16 @@
   },
   "dependencies": {
     "@astrojs/preact": "^2.2.1",
-    "astro": "^2.5.6",
+    "astro": "^2.7.0",
     "astro-icon": "^0.8.1",
-    "nanostores": "^0.9.1",
     "preact": "^10.15.1",
-    "sass": "^1.62.1"
+    "sass": "^1.63.6"
   },
   "overrides": {
     "react": "npm:@preact/compat@latest",
     "react-dom": "npm:@preact/compat@latest"
+  },
+  "devDependencies": {
+    "@types/node": "^20.3.1"
   }
 }
