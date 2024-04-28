@@ -12,7 +12,9 @@ export type SiteConfig = {
 }
 
 let _siteConfigStore = await cmsDataFirst<SiteConfig>(listEndpointBuilder('site_config', {
-  pageSize: 1, expand: ['socials'], filter: "configName='evanlihou.com'",
+  pageSize: 1,
+  expand: ['socials'],
+  filter: `configName='${import.meta.env['PUBLIC_SITECONFIG'] ?? process.env['PUBLIC_SITECONFIG'] ?? 'evanlihou.com'}'`,
   fields: ['name', 'email', 'aboutMe', 'socials', 'expand.socials.{id,display,url,icon}']
 }));
 if (_siteConfigStore == null) throw new Error("Did not find a site config");
